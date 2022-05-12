@@ -29,6 +29,8 @@ RUN pip3 install --no-cache-dir -r requirements_test.txt
 # Update code
 COPY ./ ./
 
+ENV USE_NNPACK 0
+
 # Install to site-packages to make possible run tests and process images by cli
 RUN pip3 install -e ./
 
