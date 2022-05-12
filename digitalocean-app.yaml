@@ -1,0 +1,15 @@
+name: removebg
+region: ams
+services:
+  - name: removebg
+    github:
+        repo: cerveco/image-background-remove-tool
+        branch: master
+        deploy_on_push: true
+    http_port: 5000
+    source_dir: /
+    dockerfile_path: ./Dockerfile.cpu
+    instance_count: 1
+    instance_size_slug: basic-xs
+    routes:
+        - path: /
