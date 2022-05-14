@@ -21,7 +21,6 @@ RUN apt-get update && apt-get -y install libgl1  # Install cv2 dep.
 COPY --from=builder /root/.carvekit /root/.carvekit
 
 # Install requirements
-ENV USE_NNPACK 0
 COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 COPY requirements_test.txt ./
