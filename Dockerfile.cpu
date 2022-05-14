@@ -1,6 +1,27 @@
 FROM python:3.8.2 as builder
 WORKDIR /app
 
+
+# Download and install anaconda. 
+RUN mkdir -p ./conda
+WORKDIR ./conda
+RUN curl https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh | bash -s -b
+RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
+RUN conda install -c pytorch magma-cuda110
+
+# Download and build pytorch from source. 
+RUN git clone --recursive https://github.com/pytorch/pytorch
+RUN cd pytorch
+# if you are updating an existing checkout
+RUN git submodule sync
+RUN git submodule update --init --recursive --jobs 0
+ARG CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
+ARG export USE_NNPACK=0
+RUN python setup.py install
+
+WORKDIR /app
+RUN rm -rf ./conda
+
 # Models download stage
 RUN pip3 install --no-cache-dir tqdm requests
 RUN mkdir -p ./carvekit/utils/
