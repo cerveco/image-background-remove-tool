@@ -1,30 +1,32 @@
 FROM python:3.8.2 as builder
+#FROM continuumio/anaconda3 as builder
+
+#SHELL [ "/bin/bash", "--login", "-c" ]
+
 WORKDIR /app
 
-
 # Download and install anaconda. 
-RUN mkdir -p ./conda
-WORKDIR ./conda
-RUN curl https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh -O
-RUN bash Anaconda3-2022.05-Linux-x86_64.sh -b
-RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
-RUN conda install -c pytorch magma-cuda110
+#RUN conda init bash
+#RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
+#RUN conda activate
 
 # Download and build pytorch from source. 
 RUN git clone --recursive https://github.com/pytorch/pytorch
-RUN cd pytorch
+WORKDIR pytorch
 # if you are updating an existing checkout
 RUN git submodule sync
 RUN git submodule update --init --recursive --jobs 0
-ARG CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
+RUN apt update && apt install -y gcc clang clang-tools cmake python3
+ARG export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
+ARG export USE_CUDA=OFF
 ARG export USE_NNPACK=0
+RUN pip3 install --no-cache-dir tqdm requests pyyaml typing_extensions
 RUN python setup.py install
 
 WORKDIR /app
-RUN rm -rf ./conda
+RUN rm -rf ./pytorch
 
 # Models download stage
-RUN pip3 install --no-cache-dir tqdm requests
 RUN mkdir -p ./carvekit/utils/
 RUN mkdir -p ./carvekit/ml/files
 RUN touch ./carvekit/__init__.py
