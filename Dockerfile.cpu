@@ -1,14 +1,6 @@
 FROM python:3.8.2 as builder
-#FROM continuumio/anaconda3 as builder
-
-#SHELL [ "/bin/bash", "--login", "-c" ]
 
 WORKDIR /app
-
-# Download and install anaconda. 
-#RUN conda init bash
-#RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
-#RUN conda activate
 
 # Download and build pytorch from source. 
 RUN git clone --recursive https://github.com/pytorch/pytorch

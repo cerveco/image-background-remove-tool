@@ -4,7 +4,7 @@ services:
       dockerfile: Dockerfile.cpu
       context: .
     ports:
-      - "5000:5000"  # 5000
+      - "8080:5000"  # 5000
     environment:
       - CARVEKIT_PORT=5000
       - CARVEKIT_HOST=0.0.0.0
